@@ -11,16 +11,16 @@ class Movie:
 		self._year = year
 		self._genre = genre
 	
-	def get_title(self):
+	def get_title(self)->str:
 		return self._title
 
-	def get_year(self):
+	def get_year(self)->str:
 		return self._year
 
-	def get_genre(self):
+	def get_genre(self)->List[str]:
 		return self._genre
 
-	def is_genre(self, genre):
+	def is_genre(self, genre:str)->bool:
 		return genre in self._genre
 
 
@@ -40,8 +40,9 @@ class MovieCatalog:
 			file = open('movies.csv')
 			movie_catalog = csv.reader(file)
 			for movie in movie_catalog:
-				if movie[1] == movie_name:
+				if movie_name == movie[1]:
 					year = movie[2]
 					genre = movie[3].split('|')
 					self._movies_dict[movie_name] = Movie(movie_name, year, genre)
 					break
+			file.close()

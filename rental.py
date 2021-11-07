@@ -1,4 +1,6 @@
+import datetime
 from enum import Enum
+from movie import Movie, MovieCatalog
 
 class PriceCode(Enum):
 	"""An enumeration for different kinds of movies and their behavior"""
@@ -21,6 +23,17 @@ class PriceCode(Enum):
 		"Retrun the point for a given number of days"
 		point = self.value["frp"]
 		return point(days)
+
+	@staticmethod
+	def for_movie(movie: Movie):
+		this_year = str(datetime.date.today().year)
+		if movie.get_year() == this_year:
+			return PriceCode.new_release
+		elif movie.is_genre("Children"):
+			return PriceCode.childrens
+		else:
+			return PriceCode.regular
+		
 
 
 class Rental:
@@ -45,17 +58,14 @@ class Rental:
 		self.days_rented = days_rented
 		self.price_code = price_code
 
-	def get_movie(self):
-		return self.movie
-
-	def get_price_code(self):
-		return self.price_code
+	def get_title(self):
+		return self.movie.get_title()
 
 	def get_days_rented(self):
 		return self.days_rented
 
-	def get_price(self):
+	def get_charge(self):
 		return self.price_code.price(self.days_rented)
 
-	def get_point(self):
+	def get_rental_points(self):
 		return self.price_code.point(self.days_rented)

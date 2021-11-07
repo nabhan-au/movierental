@@ -1,5 +1,5 @@
 from rental import Rental, PriceCode
-from movie import Movie
+from movie import MovieCatalog
 from typing import List
 
 class Customer:
@@ -64,9 +64,10 @@ class Customer:
 
 if __name__ == "__main__":
     customer = Customer("Edward Snowden")
+    catalog = MovieCatalog()
     print(customer.statement())
-    movie = Movie("Hacker Noon")
-    customer.add_rental(Rental(movie, 2, PriceCode.regular))
-    movie = Movie("CitizenFour")
-    customer.add_rental(Rental(movie, 3, PriceCode.new_release))
+    movie = catalog.get_movie("Mulan")
+    customer.add_rental(Rental(movie, 2, PriceCode.for_movie(movie)))
+    movie = catalog.get_movie("Spotlight")
+    customer.add_rental(Rental(movie, 3, PriceCode.for_movie(movie)))
     print(customer.statement())
