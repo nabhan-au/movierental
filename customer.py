@@ -1,5 +1,6 @@
-from rental import Rental
-from movie import Movie, PriceCode
+from rental import Rental, PriceCode
+from movie import Movie
+from typing import List
 
 class Customer:
     """
@@ -11,7 +12,7 @@ class Customer:
     def __init__(self, name: str):
         """ Initialize a new customer."""
         self.name = name
-        self.rentals = []
+        self.rentals: List[Rental] = []
 
     def add_rental(self, rental: Rental):
         if rental not in self.rentals:
@@ -19,6 +20,18 @@ class Customer:
     
     def get_name(self):
         return self.name
+
+    def compute_rental_points(self):
+        frequent_renter_points = 0 
+        for rental in self.rentals:
+            frequent_renter_points += rental.get_rental_points()
+        return frequent_renter_points
+
+    def compute_total_charge(self):
+        total_charge = 0
+        for rental in self.rentals:
+            total_charge += rental.get_charge()
+        return total_charge
     
     def statement(self):
         """
@@ -28,21 +41,17 @@ class Customer:
                 the statement as a String
         """
         total_amount = 0 # total charges
-        frequent_renter_points = 0 
+        
         statement = f"Rental Report for {self.name}\n\n"
         fmt = "{:32s}    {:4s} {:6s}\n"
         statement += fmt.format("Movie Title", "Days", "Price")
         fmt = "{:32s}   {:4d} {:6.2f}\n"
         
+        frequent_renter_points = self.compute_rental_points()
+        total_amount = self.compute_total_charge()
         for rental in self.rentals:
-            # compute rental change
-            amount = 0
-            # award renter points
-            frequent_renter_points += rental.get_point()
             #  add detail line to statement
-            statement += fmt.format(rental.get_movie().get_title(), rental.get_days_rented(), rental.get_price())
-            # and accumulate activity
-            total_amount += rental.get_price()
+            statement += fmt.format(rental.get_title(), rental.days_rented, rental.get_charge())
 
         # footer: summary of charges
         statement += "\n"
@@ -56,8 +65,8 @@ class Customer:
 if __name__ == "__main__":
     customer = Customer("Edward Snowden")
     print(customer.statement())
-    movie = Movie("Hacker Noon", PriceCode.regular)
-    customer.add_rental(Rental(movie, 2))
-    movie = Movie("CitizenFour", PriceCode.new_release)
-    customer.add_rental(Rental(movie, 3))
+    movie = Movie("Hacker Noon")
+    customer.add_rental(Rental(movie, 2, PriceCode.regular))
+    movie = Movie("CitizenFour")
+    customer.add_rental(Rental(movie, 3, PriceCode.new_release))
     print(customer.statement())
